@@ -33,18 +33,19 @@ const register=async(req,res)=>{
 const login=async(req,res)=>{
     const {userName,password}=req.body
     try {
-        const User=await User.findOne({userName})
-        if(!User){
+        const user=await User.findOne({userName})
+        console.log('founded user',user)
+        if(!user){
             console.log('User not found')
             res.status(404).json({message:'User Not found'})
         }
-        const isMatch=await bcrypt.compare(password,User.password)
+        const isMatch=await bcrypt.compare(password,user.password)
         if(!isMatch){
             console.log('User password is not matched')
             res.status(404).json({message:'Invalid Credentials'})
         }
         const token = jwt.sign(
-            {id:User._id,role:User.role},
+            {id:user._id,role:user.role},
             process.env.JWT_SECRET,
             {expiresIn:"1h"}
         )
